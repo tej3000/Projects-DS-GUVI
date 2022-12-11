@@ -1,5 +1,5 @@
 # open("maildatabase.txt","x")     for creating the text file for the first time only
-#db = open("maildatabase.txt","a")                              #For sample to be included in file
+#db = open("maildatabase.txt","a")                              #For samples to be included in file
 #db.write("Sample@mail.com"+" "+"Secure@143-"+"\n")
 #db.close()
 def registration():
