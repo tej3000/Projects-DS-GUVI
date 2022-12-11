@@ -1,0 +1,129 @@
+# open("maildatabase.txt","x")     for creating the text file for the first time only
+#db = open("maildatabase.txt","a")                              #For sample to be included in file
+#db.write("Sample@mail.com"+" "+"Secure@143-"+"\n")
+#db.close()
+def registration():
+    maildb = open("maildatabase.txt","r")           # Reading the database
+    print("Please follow the instructions for creating a username: \n 1. Username must contains '@' followed by '.' \n 2. The '.' should not be immeadite next to '@' \n 3. It should not start with any special charecters and numbers")
+    mail_id = input("Please enter the username:")   # Entering the mail ID for registration
+    if '@' in mail_id:
+        if '.' in mail_id:
+            inde = mail_id.index('@')
+            if mail_id[inde+1] != '.':
+                string = mail_id[0]
+                if string.isalpha():
+                    if mail_id in maildb:
+                        print("Username Already exists")
+                        registration()
+                    else:
+                        Password = password()                        # Calling the password function
+                        maildb = open("maildatabase.txt","a")
+                        maildb.write(mail_id+" "+Password+"\n")
+                        maildb.close()
+                        print("\nRegistration successful\n")
+                        selection()
+                else:
+                    print("\nThe username should not start with special or numerical charecters")
+                    registration()
+            else:
+                print("\nThe '.' should not come immediately after '@' ")
+                registration()
+        else:
+            print("\nThe mail_id must consists of '.' ")
+            registration()
+    else:
+        print("\nThe mail_id must contain '@' ")
+        registration()
+        
+def password():
+    print("\nFollow the instructions for creating a password: \n 1. 5 < length of password <16 \n 2. The password must contain a special charecter \n 3. a digit and a upper and lower case charecter")
+    Password = input("\nPlease enter the password for security: ")
+    lower = upper = special = num = 0
+    if  5 <len(Password)< 16 :
+        for i in Password:
+            if i.islower():
+                lower +=1
+            elif i.isupper():
+                upper += 1
+            elif i.isdigit():
+                num += 1
+            elif i.isalnum() == False:
+                special +=1
+    if lower > 0 and upper > 0 and num > 0 and special > 0:
+        Password1 = input("\nPlease confirm the password: ")
+        if Password == Password1:
+            return Password
+        else:
+            print("\nThe Passwords should match")
+            password()
+    else:
+        print("\nPassword failing given required conditions")
+        password()
+        
+def login():
+    maildb = open("maildatabase.txt","r")
+    m = []
+    p = []
+    for i in maildb:
+        t,n = i.split()
+        n = n.strip()
+        p.append(n)
+        m.append(t) 
+    datadb = dict(zip(m, p))
+    maildb.close()
+    print("\nYou have selected the login option \n To continue with login please enter your registered mail_id and Password")
+    mail_id = input("\n Please enter registered mail Id: ")
+    if mail_id in m:
+        password = input("Enter the password for the mail Id {}".format(mail_id))
+        if password == datadb[mail_id]:
+            print("\nYou have successfully logged in...... \n ---Carry on with you work---")
+        else:
+            print("\nPassword Invalid \n")
+            print("\n If you have forgot your password \n Please press 1 \n To enter correct password press 2")
+            sel = input()
+            if sel == "1":
+                print("\n Sorry, that you have forgotten your password \n You should not have")
+                print("\n To know your password please press 1 \n To change your password press 2 \n")
+                change = input()
+                if change == "1":
+                    print("\nYour password for mail ID {} is '{}' \n".format(mail_id,datadb[mail_id]))
+                else:
+                    maildb = open("maildatabase.txt","r+")
+                    lines = maildb.readlines()
+                    line_num = lines.index(mail_id+" "+datadb[mail_id]+"\n")
+                    del lines[line_num]
+                    new_pass = input("Please enter new password")
+                    lines.append(mail_id+" "+new_pass+"\n")
+                    for i in lines:
+                        maildb.write(i)
+                    maildb.close()
+                    print("\nYour password successfully changed \n")
+                    login()
+            elif sel == "2":
+                login()
+            else:
+                print(Please)
+    else:
+        print("\n Username does not exist in database \n Please either enter correct username or go for registration")
+        print("\n To for entering vaild mail Id press : 1 \n To register enter : 2")
+        cho = input()
+        if cho == '1':
+            login()
+        elif cho == '2':
+            registration()
+        else:
+            print(" \n Please choose from above options only")
+            login()
+
+def selection():
+    print("Please select your option from below: \n 1. Login - If you're already a registered user \n 2. Registration - If you're a new user and wish create a account in this database")
+    choice = input("Login | Registration : ")
+    if choice == "Login":
+        login()
+    elif choice == "Registration":
+        registration()
+    else:
+        print("Please select from above options only")
+        selection()
+        
+selection()
